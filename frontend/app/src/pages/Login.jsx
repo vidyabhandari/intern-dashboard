@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link,useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Login = () => {
@@ -22,13 +23,17 @@ const Login = () => {
             const data = await res.json();
 
             if(res.ok){
-                navigate('/dashboard');
+              localStorage.setItem('userName',data.user.name);
+              localStorage.setItem('userEmail',data.user.email);
+              console.log(data.user.email);
+              toast.success('Login Successful!');
+                navigate('/form');
             }else{
-                alert(data.message || 'Login failed');
+                toast.error(data.message || 'Login failed');
             }
         }catch(err){
             console.error('Login error: ',err);
-            alert('Something went wrong. Please try again.');
+            toast.error('Something went wrong. Please try again.');
         }
     };
     
