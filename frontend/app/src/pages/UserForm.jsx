@@ -1,4 +1,3 @@
-// UserForm.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -51,19 +50,51 @@ const UserForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" value={name} disabled />
-      <input type="email" value={email} disabled />
-      <input
-        type="number"
-        name="donations"
-        placeholder="Total Donations"
-        required
-        value={donations}
-        onChange={(e) => setDonations(e.target.value)}
-      />
-      <button type="submit">Submit</button>
-    </form>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8 border border-gray-200">
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+          Complete Your Profile
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Name</label>
+            <input
+              type="text"
+              value={name}
+              disabled
+              className="w-full px-3 py-2 border rounded-md bg-gray-100 text-gray-800 cursor-not-allowed"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Email</label>
+            <input
+              type="email"
+              value={email}
+              disabled
+              className="w-full px-3 py-2 border rounded-md bg-gray-100 text-gray-800 cursor-not-allowed"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Total Donations (₹)</label>
+            <input
+              type="number"
+              name="donations"
+              placeholder="Enter total donations"
+              required
+              value={donations}
+              onChange={(e) => setDonations(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 

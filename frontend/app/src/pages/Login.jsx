@@ -30,7 +30,7 @@ const Login = () => {
         const userRes = await fetch(`${BASE_URL}/api/dashboard/${email}`);
         const userData = await userRes.json();
 
-        if (userRes.ok && userData?.totalDonations != null) {
+        if (userRes.ok && userData?.totalDonations > 0) {
           localStorage.setItem('userDonations', userData.totalDonations);
           localStorage.setItem('referralCode', userData.referralCode);
           navigate('/dashboard');
