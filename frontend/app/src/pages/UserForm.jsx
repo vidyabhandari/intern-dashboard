@@ -1,33 +1,67 @@
-import React, { useState } from 'react';
+// UserForm.jsx
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const UserForm = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    donations: ''
-  });
-
   const navigate = useNavigate();
+  const name = localStorage.getItem('userName');
+  const email = localStorage.getItem('userEmail');
+  const referralCode = name ? `${name.toLowerCase()}2025` : '';
 
-  const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
-  };
+  const [donations, setDonations] = useState('');
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    if (!name || !email) {
+      toast.error('No user info found. Please login.');
+      navigate('/');
+    }
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Save to localStorage
-    localStorage.setItem('userName', formData.name);
-    localStorage.setItem('userEmail', formData.email);
-    localStorage.setItem('userDonations', formData.donations);
-    navigate('/dashboard');
+    try {
+      const res = await fetch(`${BASE_URL}/api/user`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          referralCode,
+          totalDonations: parseFloat(donations),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.msg || 'Error saving user');
+        return;
+      }
+
+      localStorage.setItem('userDonations', donations);
+      localStorage.setItem('referralCode', referralCode);
+      toast.success('User Info Saved!');
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Submit Error:', err);
+      toast.error('Server error');
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type="text" name="name" placeholder="Name" required onChange={handleChange} />
-      <input type="email" name="email" placeholder="Email" required onChange={handleChange} />
-      <input type="number" name="donations" placeholder="Total Donations" required onChange={handleChange} />
+      <input type="text" value={name} disabled />
+      <input type="email" value={email} disabled />
+      <input
+        type="number"
+        name="donations"
+        placeholder="Total Donations"
+        required
+        value={donations}
+        onChange={(e) => setDonations(e.target.value)}
+      />
       <button type="submit">Submit</button>
     </form>
   );

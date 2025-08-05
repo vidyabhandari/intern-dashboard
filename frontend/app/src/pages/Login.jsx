@@ -4,38 +4,49 @@ import { toast } from 'react-toastify';
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-    const [email,setEmail] = useState('');
-    const [password,setPassword] = useState('');
-    const navigate = useNavigate();
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        try{
-            const res = await fetch(`${BASE_URL}/api/auth/login`,{
-            method: 'POST',
-            headers:{
-                'Content-Type':'application/json',
-            },
-            body: JSON.stringify({email, password}),
-            });
+    try {
+      const res = await fetch(`${BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-            const data = await res.json();
+      const data = await res.json();
 
-            if(res.ok){
-              localStorage.setItem('userName',data.user.name);
-              localStorage.setItem('userEmail',data.user.email);
-              console.log(data.user.email);
-              toast.success('Login Successful!');
-                navigate('/form');
-            }else{
-                toast.error(data.message || 'Login failed');
-            }
-        }catch(err){
-            console.error('Login error: ',err);
-            toast.error('Something went wrong. Please try again.');
+      if (res.ok) {
+        const { name, email } = data.user;
+
+        localStorage.setItem('userName', name);
+        localStorage.setItem('userEmail', email);
+
+        // 🔍 Check if user data already exists in DB
+        const userRes = await fetch(`${BASE_URL}/api/dashboard/${email}`);
+        const userData = await userRes.json();
+
+        if (userRes.ok && userData?.totalDonations != null) {
+          localStorage.setItem('userDonations', userData.totalDonations);
+          localStorage.setItem('referralCode', userData.referralCode);
+          navigate('/dashboard');
+        } else {
+          navigate('/form');
         }
-    };
+
+        toast.success('Login successful!');
+      } else {
+        toast.error(data.message || 'Login failed');
+      }
+    } catch (err) {
+      console.error('Login error: ', err);
+      toast.error('Something went wrong.');
+    }
+  };
     
   return (
     <div className="min-h-screen flex flex-col md:flex-row items-center justify-center gap-20 p-4 md:p-10 bg-gray-100">
