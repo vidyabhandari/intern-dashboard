@@ -1,8 +1,47 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Signup = () => {
+
+    const [name, setName] = useState('');
+    const [email,setEmail] = useState('');
+    const [password,setPassword] = useState('');
+    const [confirmPassword,setConfrimPassword] = useState('');
+    const navigate = useNavigate();
+
+    const handleSignup = async(e) => {
+        e.preventDefault();
+
+        if(password!==confirmPassword){
+            alert('Passwords do not match');
+            return;
+        }
+
+        try{
+            const res = await fetch(`${BASE_URL}/api/auth/signup`,{
+                method: 'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                },
+                body: JSON.stringify({name,email,password}),
+            });
+
+            const data = await res.json();
+
+            if(res.ok){
+                navigate('/dashboard');
+            }else{
+                alert(data.message || 'Signup failed');
+            }
+        }catch(err){
+            console.error('Signup error: ',err);
+            alert('Something went wrong. Please try again. ');
+        }
+    };
+
   return (
+
    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center gap-20 p-4 md:p-10 bg-gray-100">
       
       <div
@@ -14,17 +53,30 @@ const Signup = () => {
         <p>Portal</p>
       </div>
 
-      <div
-        id="login-div"
+      <form
+        onSubmit={handleSignup}
+        id="signup-div"
         className="border-2 border-gray-900 px-6 py-8 text-base text-center w-full max-w-xs bg-white shadow-md rounded-lg flex flex-col justify-center"
       >
         <h2 className="text-xl font-semibold mb-4">Sign Up</h2>
         
         <input
+          type="name"
+          name="name"
+          id="name"
+          placeholder="Enter name"
+          value={name}
+          onChange={(e)=>setName(e.target.value)}
+          className="w-full p-2 mb-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <input
           type="email"
           name="email"
           id="email"
           placeholder="Email"
+          value={email}
+          onChange={(e)=>setEmail(e.target.value)}
           className="w-full p-2 mb-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
@@ -33,6 +85,8 @@ const Signup = () => {
           name="password"
           id="password"
           placeholder="Enter Password"
+          value={password}
+          onChange={(e)=>setPassword(e.target.value)}
           className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
@@ -41,6 +95,8 @@ const Signup = () => {
           name="confirm-password"
           id="confirm-password"
           placeholder="Enter Confirm Password"
+          value={confirmPassword}
+          onChange={(e)=>setConfrimPassword(e.target.value)}
           className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
@@ -54,7 +110,7 @@ const Signup = () => {
             Login
           </Link>
         </p>
-      </div>
+      </form>
     </div>
   )
 }
