@@ -1,5 +1,5 @@
 
-# 🌟 Donation Dashboard Web App
+# 🌟 Intern Dashboard Portal Web App
 
 A full-stack web application that allows users to:
 - Track their **total donations**
