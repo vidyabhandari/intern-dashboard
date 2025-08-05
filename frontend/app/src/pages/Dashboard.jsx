@@ -1,6 +1,6 @@
 // Dashboard.jsx
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
@@ -116,6 +116,10 @@ const Dashboard = () => {
       <button onClick={handleLogout}
         className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
       >Logout</button>
+      <Link to="/leaderboard" 
+      className="mt-2 text-sm text-blue-600 hover:underline">
+        View Leaderboard →
+      </Link>
       </div>
     </div>
   );

@@ -48,4 +48,13 @@ router.put('/user/update-donations', async (req, res) => {
   }
 });
 
+router.get('/user/all',async (req,res) => {
+  try{
+    const users = await User.find().select('name referralCode totalDonations email');
+    res.status(200).json(users);
+  }catch(err){
+    res.status(500).json({msg: 'Failed to fetch user'});
+  }
+})
+
 module.exports = router;
